@@ -1,0 +1,36 @@
+
+nav p {
+  font-weight: bolder;
+  font-size: larger;
+  margin-right: 2vh; 
+  margin-left:1vh;
+  text-decoration: none;
+  color: rgba(25, 144, 25, 0.685); 
+}
+.header{
+  color: rgba(25, 144, 25, 0.685); 
+  h2{
+    font-weight: bolder;
+  }
+  
+}
+.logo:hover{
+  cursor: pointer;
+}
+
+nav p:last-child {
+  margin-right: 0; 
+}
+nav:hover{
+  cursor: pointer;
+}
+nav{
+  padding-inline: 1vh;
+}
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000; /* Higher z-index for mobile bottom navigation */
+}

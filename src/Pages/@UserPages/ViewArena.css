@@ -1,0 +1,23 @@
+.breadcrumb-item{
+Link{
+  color: yellow;
+}
+}
+.turfcont{
+  img{
+    
+
+  width: 100%;
+  height: auto;
+  max-height: 600px
+  
+  }
+}
+@media (max-width: 768px) {
+.sportavailable{
+  width: 200%;
+}
+}
+.sportind:hover{
+  cursor: pointer;
+}

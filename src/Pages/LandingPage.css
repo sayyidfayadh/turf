@@ -1,0 +1,9 @@
+.main-content {
+  padding-bottom: 80px; /* Ensure this value is larger than the height of the bottom nav */
+  
+}
+@media (max-width: 768px) {
+  .main-content {
+    padding-bottom: 80px; /* Add padding at the bottom for mobile screens */
+  }
+}
