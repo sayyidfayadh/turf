@@ -103,7 +103,7 @@ function UserProfile() {
           <Button
             variant="danger"
             startIcon={<EditNote />}
-            onClick={() => setEditMode(true)}
+            // onClick={() => setEditMode(true)}
           >
             LogOut
           </Button>
