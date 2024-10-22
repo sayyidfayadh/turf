@@ -9,7 +9,7 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import Booking from './Pages/@UserPages/Booking'
 import ViewArena from './Pages/@UserPages/ViewArena'
 import SlotBooking from './Pages/@UserPages/SlotBooking'
-import Profile from './Pages/@UserPages/profile'
+import UserProfile from './Pages/@UserPages/UserProfile'
 
 function App() {
 
@@ -23,7 +23,7 @@ function App() {
       <Route path='/home' element={<UserHome/>}/>
       <Route path='/view/:id' element={<ViewArena/>} />
       <Route path='/cart/:id' element={<SlotBooking/>} />
-      <Route path='/profile/' element={<Profile/>} />
+      <Route path='/profile/' element={<UserProfile/>} />
     </Routes>`
     
      
