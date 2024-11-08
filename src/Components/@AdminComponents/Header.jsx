@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import "./Header.css";
 import Box from "@mui/material/Box";
 import BottomNavigation from "@mui/material/BottomNavigation";
 import BottomNavigationAction from "@mui/material/BottomNavigationAction";
@@ -36,9 +35,9 @@ function Header({ hideLocationElement }) {
     <div className="bg-light border">
       {/* header */}
       <nav>
-        <div className="d-flex  align-items-center justify-content-between p-2">
+        <div className="d-flex  align-items-center justify-content-around p-2">
           <div className="header d-flex align-items-center jusify-content-between ">
-            <div className="logo" onClick={() => navigate("/")}>
+            <div className="logo" onClick={() => navigate("/turfadmin")}>
               <h2>
                 {" "}
                 <img
@@ -47,53 +46,28 @@ function Header({ hideLocationElement }) {
                   height={"60vw"}
                   alt="logo"
                 />{" "}
-                Arena
+                YourArena
               </h2>
               {/* <input type="text" className="form-control" /> */}
             </div>
-            <div className="flex-end">
-              {hideLocationElement ? null : (
-                <Autocomplete
-                  sx={{
-                    width: "25vh",
-                    marginLeft: "6vh",
-                    outlineColor: "green",
-                    borderRadius: "8px",
-                    "& .MuiOutlinedInput-root": {
-                      borderRadius: "10px",
-                    },
-                  }}
-                  options={cities}
-                  value={location}
-                  onChange={handleLocationChange}
-                  renderInput={(params) => <TextField {...params} label="" />}
-                />
-              )}
-            </div>
+            
           </div>
 
           <div className="navs w-50  d-none d-md-flex justify-content-between">
-            <p className="nav" onClick={() => navigate("/")}>
+            <p className="nav" onClick={() => navigate("/turfadmin")}>
               <HomeIcon />
               Home
             </p>
-            <p onClick={() => navigate("/booking")} className="nav">
+            <p onClick={() => navigate("/addturf")} className="nav">
               <LocalActivityIcon />
-              Book
+              Turf
             </p>
-            <p className="nav"  onClick={() => navigate("/shop")}  onChange={(event, newValue) => {
-                setValue(newValue);
-              }}>
-              {" "}
-              
-              <SportsKabaddiIcon />
-              Shop
-            </p>
+        
 
             {/* <p className="nav"> <LightbulbIcon />Learn</p> */}
           </div>
           <div className="d-flex d-none d-md-flex">
-            <Link to={"/profile"}>
+            <Link to={"/adminprofile"}>
               <button className="btn btn-rounded btn-sm">
                 {" "}
                 <AccountCircleIcon sx={{ fontSize: "40px" }} />
@@ -123,21 +97,16 @@ function Header({ hideLocationElement }) {
               <BottomNavigationAction
                 label="Home"
                 icon={<HomeIcon />}
-                onClick={() => navigate("/")}
+                onClick={() => navigate("/turfadmin")}
               />
               
               <BottomNavigationAction
-                onClick={() => navigate("/booking")}
-                label="Book"
+                onClick={() => navigate("/addturf")}
+                label="Turf"
                 icon={<LocalActivityIcon />}
               />
-<BottomNavigationAction
-                label="Shop"
-                onClick={() => navigate("/shop")}
-                icon={<SportsKabaddiIcon />}
-              />
               <BottomNavigationAction
-                onClick={() => navigate("/profile")}
+                onClick={() => navigate("/adminprofile")}
                 label="Profile"
                 icon={<AccountCircleIcon />}
               />

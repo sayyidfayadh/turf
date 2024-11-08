@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Modal, Button } from 'react-bootstrap';
 import MedicalServicesIcon from '@mui/icons-material/MedicalServices';
 import SportsCricketIcon from "@mui/icons-material/SportsCricket";
@@ -7,8 +7,29 @@ import Header from "../../Components/Header/Header";
 import "./ViewArena.css";
 import PoolIcon from '@mui/icons-material/Pool';
 import Footer from "../../Components/Footer/Footer";
+import { getViewTurfAPI } from "../../Services/AllAPI";
 
 function ViewArena() {
+  const {id}=useParams()
+  // console.log(id);
+  const[viewTurfData,setViewTurfData]=useState({})
+  useEffect(()=>{
+    
+    if(id){
+      getViewTurf(id)
+    }
+    
+  },[id])
+  const getViewTurf=async(id)=>{
+   try {
+    const result=await getViewTurfAPI(id)
+    console.log(result);   
+    setViewTurfData(result.data)
+   } catch (error) {
+    console.error(error.response ? error.response.data : error.message)
+   }
+  }
+  
   const navigate=useNavigate()
   const [showModal, setShowModal] = useState(false);
   const [selectedSport, setSelectedSport] = useState("");
