@@ -59,7 +59,7 @@ function Booking() {
               placeholder="Search by arena"
             />
 </div>
-            <Autocomplete
+            {/* <Autocomplete
               sx={{
                 width: "30vw",
                 marginLeft: "1vh",
@@ -73,7 +73,7 @@ function Booking() {
               value={sport}
               onChange={handleSportsChange}
               renderInput={(params) => <TextField {...params} label="" />}
-            />
+            /> */}
         </div>
       </div>
       <div className="container-fluid d-flex flex-wrap gap-5 mt-2 ps-5 bg-light p-5">

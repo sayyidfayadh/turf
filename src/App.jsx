@@ -18,13 +18,17 @@ import ShopCart from './Pages/@UserPages/shop/ShopCart'
 import Profile from './Pages/@AdminPages/turfadmin/Profile'
 import AdminHome from './Pages/@AdminPages/superadmin/AdminHome'
 import AddMerchandise from './Pages/@AdminPages/superadmin/AddMerchandise'
-
+import 'react-toastify/dist/ReactToastify.css';
 import { TokenAuthContext } from './ContextAPI/TokenAuth'
 import { useContext } from 'react'
 import TurfForm from './Pages/@AdminPages/turfadmin/TurfForm'
+import AdminAuth from './Pages/@AdminPages/turfadmin/adminAuth'
+import UserAuth from './Pages/@UserPages/UserAuth'
+
 
 function App() {
   const {isAuthorized,setIsAuthorized}=useContext(TokenAuthContext)
+  const {isUser,setIsUser}=useContext(TokenAuthContext)
 
   return (
     <>
@@ -38,16 +42,16 @@ function App() {
       <Route path='/view/:id' element={<ViewArena/>} />
       <Route path='/viewproduct/:id' element={<ViewProduct/>} />
       <Route path='/shopcart' element={<ShopCart/>}/>
-      <Route path='/cart/:id' element={<SlotBooking/>} />
-      <Route path='/profile/' element={<UserProfile/>} />
+      <Route path='/cart/:id' element={isUser?<SlotBooking/>:<UserAuth/>} />
+      <Route path='/profile/' element={isUser?<UserProfile/>:<UserAuth/>} />
       
       //admin
       <Route path='/admin' element={<AdminHome/>}/>
       <Route path='/addproducts' element={<AddMerchandise/>}/>
       //TurfAdmin
       <Route path='/turfadmin' element={<TurfAdmin/>}/>
-      <Route path='/adminprofile' element={isAuthorized?<Profile/>:<TurfForm/>}/>
-      <Route path='/addturf' element={<TurfForm/>}/>
+      <Route path='/adminprofile' element={isAuthorized?<Profile/>:<AdminAuth/>}/>
+      <Route path='/addturf' element={isAuthorized?<TurfForm/>:<AdminAuth/>}/>
       
     </Routes>
     

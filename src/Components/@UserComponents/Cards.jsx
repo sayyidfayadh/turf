@@ -27,25 +27,28 @@ function Cards({ turf }) {
     "Change Rooms": <Shower />,
     Pool: <PoolIcon />,
   };
-
+  console.log(turf.images);
   return (
     <div className=" me-3">
       <Card
         sx={{
           width: "350px",
+          filter: !turf.bookingStatus?"grayscale(80%)":"",
           borderRadius: "10px",
           position: "relative",
           zIndex: "1",
           marginBottom: "3vh",
         }}
       >
-        <Link to={`/view/${turf._id}`}>
+       
+        
+        <Link to={`/view/${turf?._id}`}>
           <CardActionArea>
             <CardMedia
               component="img"
               height="100vh"
               image={
-                turf.images && turf.images.length > 0
+                turf?.images && turf.images.length > 0
                   ? `${Server_URL}/upload/${turf.images[0]}`
                   : "./turf.jpg"
               }
@@ -64,8 +67,8 @@ function Cards({ turf }) {
                     justifyContent: "flex-end",
                     display: "flex",
                     alignItems: "center",
-                    backgroundColor: turf.bookingStatus
-                      ? "rgba(13, 113, 10, 0.97)"
+                    backgroundColor: turf?.bookingStatus
+                      ? "rgba(13, 113, 10, 0.67)"
                       : "red",
                     color: "white",
                     padding: "5px",
@@ -74,7 +77,7 @@ function Cards({ turf }) {
                 >
                   <p className="p-0  me-5 m-0  ms-5 fs-6">
                     {" "}
-                    {turf.bookingStatus ? "open" : "closed"}
+                    {turf?.bookingStatus ? "Available" : "closed"}
                   </p>
                 </Box>
               </div>
@@ -82,7 +85,7 @@ function Cards({ turf }) {
             <CardContent>
               <Typography
                 style={{
-                  color: "green",
+                  color: "gray",
                   fontSize: "1.8rem",
                   fontWeight: "bolder",
                 }}
@@ -90,17 +93,17 @@ function Cards({ turf }) {
                 variant="h5"
                 component="div"
               >
-                {turf.name.charAt(0).toUpperCase() + turf.name.slice(1)}
+                {turf?.name.charAt(0).toUpperCase() + turf?.name.slice(1)}
               </Typography>
               <Typography variant="body2" sx={{ color: "text.secondary" }}>
                 <span className="d-flex justify-content-between">
                   <span className="" style={{ fontSize: "1.1rem" }}>
                     {" "}
-                    {turf.location.charAt(0).toUpperCase() +
-                      turf.location.slice(1)}
+                    {turf?.location.charAt(0).toUpperCase() +
+                      turf?.location.slice(1)}
                   </span>
                   <span>
-                    {turf.amenities.map((amenity, index) => (
+                    {turf?.amenities.map((amenity, index) => (
                       <span key={index}>{amenitiesEmojis[amenity] || null}</span>
                     ))}
                   </span>

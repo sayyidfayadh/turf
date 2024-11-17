@@ -6,11 +6,11 @@ function Shop() {
   return (
     <div>
       <Header hideLocationElement={true}/>
-      <div className="container-fluid mt-2 border p-3">
-        <h3 className='p-3 bg-success text-light mb-3'>
+      <div className="container-fluid mt-2 border ">
+        <h3 className='p-3 text-center bg-success text-light '>
           Football
         </h3>
-        <div className="container-fluid d-flex justify-content-between flex-wrap gap-3 p-5" style={{backgroundColor:"whitesmoke"}}>
+        <div className="container-fluid d-flex  text-center  justify-content-between flex-wrap " style={{backgroundColor:"whitesmoke"}}>
           <ShopCard/>
           <ShopCard/>
           <ShopCard/>
@@ -18,10 +18,10 @@ function Shop() {
           <ShopCard/>
        
         </div>
-        <h3 className='p-3 bg-success text-light mb-3'>
+        <h3 className='p-2 bg-success text-center text-light '>
          Cricket
         </h3>
-        <div className="container-fluid d-flex justify-content-between flex-wrap gap-3 p-5" style={{backgroundColor:"whitesmoke"}}>
+        <div className="container-fluid    d-flex justify-content-between flex-wrap " style={{backgroundColor:"whitesmoke"}}>
           <ShopCard/>
           <ShopCard/>
           <ShopCard/>
@@ -29,10 +29,10 @@ function Shop() {
           <ShopCard/>
        
         </div>
-        <h3 className='p-3 bg-success text-light mb-3'>
+        <h3 className='p-2 bg-success  text-center  text-light '>
          Badminton
         </h3>
-        <div className="container-fluid d-flex justify-content-between flex-wrap gap-3 p-5" style={{backgroundColor:"whitesmoke"}}>
+        <div className="container-fluid d-flex justify-content-between flex-wrap " style={{backgroundColor:"whitesmoke"}}>
           <ShopCard/>
           <ShopCard/>
           <ShopCard/>

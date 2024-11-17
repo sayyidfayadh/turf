@@ -34,64 +34,6 @@ function TurfAdmin() {
    },
  ];
 
-
- 
- const[userData,setUserData]=useState({
-   
-   role:"user",
- })
- // console.log(userData);
- 
-
- const [editMode, setEditMode] = useState(false);
-
- // Handle form submission
- const handleSubmit = (e) => {
-   e.preventDefault();
-   setEditMode(false); // Save data and exit edit mode
-   console.log("Profile updated:", user);
- };
-
- // Handle input changes
- const handleChange = (e) => {
-   setUserData({
-     ...userData,
-     [e.target.name]: e.target.value,
-   });
- };
-
-const handleLogin=async()=>{
-const {email,password}=userData
-if( !email || !password){
- toast.warn("fill empty field")
-}
-else{
- try {
-   const result= await loginUserAPI(userData)
- // console.log(result);
- if(result.status===200){
-   // setUser(result.data.existingUser)
-   sessionStorage.setItem("username",result.data.existingUser.username)
-   sessionStorage.setItem("role",result.data.existingUser.role)
-   sessionStorage.setItem("token",result.data.token) 
-   toast.success(`login successfull`)
-   setUserData({email:"",password:""}) 
-   setIsLoggedIn(!isLoggedIn)
-   setIsAuthorized(true)
- }
- else{
-   toast.warn(result.response.data ||"registration failed")
- } 
-}
- catch (error) {
-   console.error(error)
-   toast.error("An error occurred during registration");
- }
-}
-
-}
-
-
 // console.log(user);
 
   return (

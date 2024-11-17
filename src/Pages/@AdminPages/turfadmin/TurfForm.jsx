@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import {  Form, Card, Container, Row, Col,Button } from 'react-bootstrap';
+import {  Form, Card, Container, Row, Col,Button, Modal, Collapse } from 'react-bootstrap';
 
 import Header from '../../../Components/@AdminComponents/Header';
 import { Box,  Chip } from '@mui/material';
@@ -7,7 +7,7 @@ import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 import { Avatar, TextField, ToggleButton, ToggleButtonGroup } from '@mui/material';
-import { changeStatusAPI, getTurfDataAPI, loginUserAPI, sendTurfDataAPI } from "../../../Services/AllAPI";
+import { changeStatusAPI, getTurfDataAPI, handleBookingAPI, loginUserAPI, sendTurfDataAPI } from "../../../Services/AllAPI";
 import {toast, ToastContainer} from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
 import { TokenAuthContext } from "../../../ContextAPI/TokenAuth";
@@ -22,15 +22,32 @@ function TurfForm() {
   const [amenities, setAmenities] = useState([]);
   const [images, setImages] = useState([]);
   // console.log(images);
+ 
+  // console.log(availableSlots);
   
+  const[selectedTimeSlots,setSelectedTimeSlots]=useState([ ])
+  // console.log("timeslooots in",selectedTimeSlots);
+  const [isChecked, setIsChecked] = useState("");
+  
+  const[date,setDate]=useState("")
+  const today = new Date().toLocaleString("en-CA", { timeZone: "Asia/Kolkata" }).split(",")[0]
   const [footballPrices, setFootballPrices] = useState({ "5's": "", "7's": "" });
   const [prices, setPrices] = useState({});
   // console.log(prices);
   const[fetchTurfData,setFetchTurfData]=useState({})
   // console.log(fetchTurfData);
+  const [open, setOpen] = useState(false);
+  const [show, setShow] = useState(false);
+  const timeSlots = [
+    "06:00-07:00", "07:00-08:00", "08:00-09:00", "09:00-10:00",
+    "10:00-11:00", "11:00-12:00", "12:00-13:00", "13:00-14:00",
+    "14:00-15:00", "15:00-16:00", "16:00-17:00", "17:00-18:00",
+    "18:00-19:00", "19:00-20:00", "20:00-21:00", "21:00-22:00",
+    "22:00-23:00","23:00-00:00"
+  ];
+  const [availableSlots,setAvailableSlots]=useState([])
+  // console.log(availableSlots);
   
-  
-
   const commonSports = ["cricket", "football", "basketball", "tennis", "badminton"];
   const commonAmenities = ["First Aid", "Free Wifi",  "Change Rooms", "Drinking Water",  "Pool"];
 //add turf
@@ -53,17 +70,7 @@ const handleAdd = (e) => {
     console.log("arena added:", newTurfData);
 //api call function 
 sendTurfData(newTurfData)
-
-
-
-    // Clear the form after submission (optional)
-    // setName("");
-    // setLocation("");
-    // setSports([]);
-    // setAmenities([]);
-    // setImages([]);
-    // setFootballPrices({ "5's": "", "7's": "" });
-    // setPrices({});
+getTurfData()
   };
   //add turf api call
   const sendTurfData=async(turfData)=>{
@@ -92,9 +99,11 @@ sendTurfData(newTurfData)
         }
         try {
           const result=await sendTurfDataAPI(reqBody,reqHeader)
-          if(result.status===201){
-
+          if(result.status===200){
+            getTurfData()
             toast.success("Turf added succesfully")
+            // console.log(result.data);
+            
           }
         } catch (error) {
           console.error(error.response.data);
@@ -111,28 +120,47 @@ sendTurfData(newTurfData)
   }
   }
   //useffect for fetching turf data
+  useEffect(()=>{
+    setDate(today)
+  },[])
 useEffect(()=>{
+  
   getTurfData()
-},[])
+},[date,show])
   //get turf api
   const getTurfData=async()=>{
+    const pickedDate=date
+    
     const token=sessionStorage.getItem("token")
       if(token){
         const reqHeader={
           "Authorization":`Bearer ${token}`,
-          "Content-Type":"multipart/form-data"
+          "Content-Type":"application/json"
+        }
+        const reqBody={
+          pickedDate
         }
         try {
-          const result=await getTurfDataAPI(reqHeader)
+          // console.log(reqBody);
+          
+          const result=await getTurfDataAPI(reqBody,reqHeader)
           if(result.status===200){
-            console.log("turf data delivered");
-            const data=result.data
+            console.log("turf data delivered",result.data);
+            const{turfData,availableSlots,bookedSlots}=result.data
+         const data=turfData
+         const fetchAvailableSlot=availableSlots
+         const fetchBookedSlot=bookedSlots
+         setAvailableSlots(fetchAvailableSlot)
+         setBookedSlots(fetchBookedSlot)
+            setSelectedTimeSlots(data?.timeslots)
             setFetchTurfData(data)
             setName(data?.name || "");
-            
+            // setAvailableSlots(data?.timeslots)
             setMap(data?.map || "");
             setSports(data?.sports?.map((sport) => sport.name) || []);
             setAmenities(data?.amenities || []);
+            
+            // setImages(data?.images)
             const fetchedSports = data?.sports.map(sport => sport.name)||[];
 
     // Set initial sports state, merging commonSports with fetched sports
@@ -141,7 +169,7 @@ if (fetchedSports.length>0){
 }
     // Populate prices and football prices based on fetched data
     setPrices(data?.sports.reduce((acc, sport) => {
-      acc[sport.name] = sport.prices.defaultPrice || '';
+      acc[sport.name] = sport?.prices?.defaultPrice || '';
       return acc;
     }, {}));
 
@@ -153,7 +181,6 @@ if (fetchedSports.length>0){
           }
         } catch (error) {
           console.error(error);
-          
           
         }
       }
@@ -185,17 +212,10 @@ if (fetchedSports.length>0){
   const handleFootballPriceChange = (format, value) => {
     setFootballPrices({ ...footballPrices, [format]: value });
   };
-  const timeSlots = [
-    "06:00-07:00", "07:00-08:00", "08:00-09:00", "09:00-10:00",
-    "10:00-11:00", "11:00-12:00", "12:00-13:00", "13:00-14:00",
-    "14:00-15:00", "15:00-16:00", "16:00-17:00", "17:00-18:00",
-    "18:00-19:00", "19:00-20:00", "20:00-21:00", "21:00-22:00",
-    "22:00-23:00","23:00-00:00"
-  ];
-  const[selectedTimeSlots,setSelectedTimeSlots]=useState([ ])
-  // console.log("timeslooots in",selectedTimeSlots);
-  
+  //for form
 
+  //slots i retrieved after submitting form
+ 
   const handleTimeSlotChange = (timeSlot) => {
     setSelectedTimeSlots((prevSlots) =>
       prevSlots.includes(timeSlot)
@@ -204,9 +224,9 @@ if (fetchedSports.length>0){
     );
     // console.log("timeslooots",selectedTimeSlots);
   };
-const[yourArena,setYourArena]=useState({name:""})
-const[date,setDate]=useState(null)
-const [isChecked, setIsChecked] = useState(false);
+
+// console.log(date);
+
 
 const handleStatus = async () => {
   const token=sessionStorage.getItem("token")
@@ -227,8 +247,34 @@ const handleStatus = async () => {
  //change status
 };
 }
+const handleBooking=async()=>{
+  const token=sessionStorage.getItem("token")
+  const reqHeader={
+    "Authorization":`Bearer ${token}`
+
+  }
+ const reqBody={
+  name:"offlineBooking",
+    SelectSlotInManage,
+    turfId:fetchTurfData._id
+    ,date
+  }
+  try {
+    const result=await handleBookingAPI(reqBody,reqHeader)
+    if(result.status==201){
+      handleClose()
+    }
+  } catch (error) {
+    console.log(error);
+    
+  }
+  
+}
 const [bookedSlots, setBookedSlots] = useState([]);
+const[SelectSlotInManage,setSelectSlotInManage]=useState("")
 const toggleSlot = (slot) => {
+  setSelectSlotInManage(slot)
+  setShow(true)
   setBookedSlots(
     (prevSelectedSlots) =>
       prevSelectedSlots.includes(slot)
@@ -249,56 +295,12 @@ useEffect(()=>{
    setIsLoggedIn(true)
  }
 })
- // Example user data
- const [user, setUser] = useState({
-  
- });
-//  console.log(user);
- const[userData,setUserData]=useState({
-   
-  role:"user",
-})
-// Handle form submission
+ //modal
+ 
+   const handleClose = () => setShow(false);
+ 
 
-
-// Handle input changes
-const handleChange = (e) => {
-  setUserData({
-    ...userData,
-    [e.target.name]: e.target.value,
-  });
-};
-
-const handleLogin=async()=>{
-const {email,password}=userData
-if( !email || !password){
-toast.warn("fill empty field")
-}
-else{
-try {
-  const result= await loginUserAPI(userData)
-// console.log(result);
-if(result.status===200){
-  // setUser(result.data.existingUser)
-  sessionStorage.setItem("username",result.data.existingUser.username)
-  sessionStorage.setItem("role",result.data.existingUser.role)
-  sessionStorage.setItem("token",result.data.token) 
-  toast.success(`login successfull`)
-  setUserData({email:"",password:""}) 
-  setIsLoggedIn(!isLoggedIn)
-  setIsAuthorized(true)
-}
-else{
-  toast.warn(result.response.data ||"registration failed")
-} 
-}
-catch (error) {
-  console.error(error)
-  toast.error("An error occurred during registration");
-}
-}
-
-}
+ 
 
   return (
     
@@ -306,44 +308,53 @@ catch (error) {
      
       <Header/>
       <ToastContainer position='top-center'/>
-      {isLoggedIn?
-      (<>
-      {Object.keys(yourArena).length > 0 ? (<>
-    <Container className="mt-4">
+    
+      {Object.keys(fetchTurfData).length > 0 ? (<>
+          <h1 className='text-center mt-2 fw-bolder text-light p-4 fs-1 border bg-success'>{fetchTurfData.name}</h1>
+    <Container  className="mt-4 p-0 fluid" style={{border:"1px solid green",borderRadius:"8px",backgroundColor:"red"}}>
         <Card>
-          <Card.Header as="h4">Manage your Turf</Card.Header>
+          <Card.Header as="h4" className='text-center bg-success text-light'>Manage your Bookings</Card.Header>
           <Card.Body>
             <Form>
               {/* Turf Status */}
               <div className="d-flex justify-content-center align-items-center mt-4">
-                <h2 className="me-3">Set Status</h2>
-                <Form.Check
-                  type="switch"
-                  id="custom-switch"
-                  checked={isChecked}
-                  label={isChecked ? "Turf is open" : "Turf is closed"}
-                  onChange={handleStatus}
-                  className="align-middle"
-                />
-              </div>
+                <h3 className="fw-bolder fs-1">{isChecked?"You are Open":"You are Closed"}</h3>
+               <Form.Check
+  type="switch"
+  
+  checked={isChecked}
 
+  onChange={handleStatus}
+  className="align-middle"
+  style={{
+    display: 'flex',
+    alignItems: 'center',
+    fontSize: '1.2rem',        
+    fontWeight: 'bold',        
+    color: isChecked ? '#28a745' : 'red' 
+  }}
+/>
+              </div>
+              <hr />
+              <label htmlFor="date">Pick a date:</label>
+        <input type="date" className='form-control' id='date'  value={date} onChange={(e)=>setDate(e.target.value)}/>
               {/* Date Picker */}
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
+              {/* <LocalizationProvider dateAdapter={AdapterDayjs}> */}
+                {/* <DatePicker
                   className="mt-4"
                   label="Date"
                   value={date}
                   onChange={(newDate) => setDate(newDate)}
                   slotProps={{ textField: { variant: "outlined" } }}
-                />
-              </LocalizationProvider>
+                /> */}
+              {/* </LocalizationProvider> */}
 
               <hr />
 
               {/* Available Time Slots */}
-              <h4 className="mt-4">Available Time Slots</h4>
+              <h4 className="mt-4">Slots free for {date}</h4>
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
-                {timeSlots.filter(slot => !bookedSlots.includes(slot)).map((slot) => (
+                {availableSlots?.filter(slot => !bookedSlots.includes(slot)).map((slot) => (
                   <Chip
                     className="mt-2"
                     key={slot}
@@ -356,9 +367,29 @@ catch (error) {
               </Box>
 
               <hr />
+              <Modal
+        show={show}
+        onHide={handleClose}
+        backdrop="static"
+        keyboard={false}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Slot removal</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+         Are you sure to remove following slot?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+          Cancel
+          </Button>
+          <Button variant="primary"  onClick={handleBooking}>Confirm</Button>
+        </Modal.Footer>
+      </Modal>
+
 
               {/* Booked Time Slots */}
-              <h4 className="mt-4">Booked Time Slots</h4>
+              <h4 className="mt-4">Booked Time Slots for {date}</h4>
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
                 {bookedSlots.length > 0 ? (
                   bookedSlots.map((slot) => (
@@ -380,13 +411,17 @@ catch (error) {
       </Container>
     
     </>):(<></>)}
-    <Container className="mt-4">
+   
+    <Container className="mt-4 p-0" style={{border:"1px solid green",borderRadius:"8px"}}>
       <Card>
-        <Card.Header as="h4">{Object.keys(yourArena).length > 0 ?"Edit":"Add"} Your Arena</Card.Header>
+        <Card.Header as="h4" className='text-center bg-success text-light'>{Object.keys(fetchTurfData).length > 0 ?"Edit":"Add"} Your Arena   <button onClick={() => setOpen(!open)} className="btn btn-sm btn-light ">
+            <i className="fa-solid fa-angle-down "></i>
+          </button></Card.Header>
+          <Collapse  in={open}>
         <Card.Body>
           <Form onSubmit={handleAdd}>
             <Form.Group className="mb-3">
-              <Form.Label>Venue Name</Form.Label>
+              <Form.Label className='fw-bold'>Venue Name</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Enter venue name"
@@ -395,8 +430,9 @@ catch (error) {
               />
             </Form.Group>
             
+            
             <Form.Group className="mb-3">
-              <Form.Label>Location</Form.Label>
+              <Form.Label className='fw-bold'>Location</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Enter location"
@@ -405,7 +441,7 @@ catch (error) {
               />
             </Form.Group>
             <Form.Group className="mb-3">
-              <Form.Label>Map</Form.Label>
+              <Form.Label className='fw-bold'>Map</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Map Link"
@@ -415,7 +451,7 @@ catch (error) {
             </Form.Group>
             
             <Form.Group className="mb-3">
-  <Form.Label>Sports Available</Form.Label>
+  <Form.Label className='fw-bold'>Sports Available</Form.Label>
   {commonSports.map((sport,index) => (
     <div key={sport} style={{ marginBottom: "10px" }}>
       <Row>
@@ -484,8 +520,10 @@ catch (error) {
 </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label >Amenities</Form.Label>
+              <Form.Label className='fw-bold'  >Amenities</Form.Label>
+             <div className='d-flex flex-wrap gap-4'>
               {commonAmenities.map((amenity) => (
+              
                 <Form.Check
                   key={amenity}
                   type="checkbox"
@@ -500,10 +538,12 @@ catch (error) {
                     }
                   }}
                 />
-              ))}
+             ))}</div>
             </Form.Group>
             <Form.Group className="mb-3">
-              <Form.Label>Available Time Slots</Form.Label>
+            
+              <Form.Label className='fw-bold'>Available Time Slots</Form.Label>
+            <div className='d-flex flex-wrap gap-4'>
               {timeSlots.map((timeSlot) => (
                 <Form.Check
                   key={timeSlot}
@@ -514,10 +554,11 @@ catch (error) {
                   onChange={() => handleTimeSlotChange(timeSlot)}
                 />
               ))}
+              </div>
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label>Upload Turf Images</Form.Label>
+              <Form.Label className='fw-bold'>Upload Turf Images</Form.Label>
               <Form.Control
                 type="file"
                 accept='.jpg,.png,.jpeg'
@@ -546,78 +587,15 @@ catch (error) {
            <div className='text-center'>
            <Button variant="success" type="submit">
               Submit
-            </Button>
+           </Button>
            </div>
           </Form>
         </Card.Body>
+        </Collapse>
       </Card>
     </Container>  
-        </>):(
-          <>
-          <div
-            className=" bg-light container w-100 p-5  border mt-4"
-            style={{
-              // width:"400px",
-              maxWidth:"600px",
-              height:"80vh",
-              boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.3)",
-              borderRadius: "10px",
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
-             
-              <>
-               <Row  className="pt-2">
-              <h1>Welcome to YourArena</h1>
-              <div className="d-flex justify-content-center mb-4">
-      <img src="./stadium.png" style={{ width: "150px", height: "150px" }} alt="aaa" />
-    </div>
-                <Col className="d-flex flex-column gap-4">
-               
-                   <TextField
-                    label="E-mail"
-                    name="email"
-                    
-                    onChange={handleChange}
-                    fullWidth
-                    multiline
-                    rows={1}
-                    margin="normal"
-                  />
-
-               
-              <TextField
-                    label="Password"
-                    name="password"
-                    onChange={handleChange}
-                    fullWidth
-                    multiline
-                    rows={1}
-                    margin="normal"
-                  />
- 
-                </Col>
-              
-              </Row>
-              
-              <div className=""style={{ marginTop: "auto" }}>
-                 <Button type="submit" variant="contained" color="success" className="w-100 mt-4 mb-4" onClick={handleLogin}>
-                    Login
-                  </Button>
-                
-                <div className="text-center mb-3">
-                  <a href=""  style={{textDecoration:"none"}} className="">
-                    Not a partner yet? send us a mail @email
-                  </a>
-                </div>
-                 </div>
-              </>
-            
-      </div>
-        </>)
-
-    }
+    
+    
      
     </div>
   );

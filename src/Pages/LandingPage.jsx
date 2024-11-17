@@ -1,17 +1,31 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../Components/Header/Header";
 import Footer from "../Components/Footer/Footer";
 import Cards from "../Components/@UserComponents/Cards";
 import zIndex from "@mui/material/styles/zIndex";
 import "./LandingPage.css";
 import { useNavigate } from "react-router-dom";
+import { getAllTurfsAPI } from "../Services/AllAPI";
 function LandingPage() {
   const navigate=useNavigate()
   const toBooking=(e)=>{
     e.preventDefault()
     navigate('/booking')
   }
-  
+  const[allTurfs,setAllTurfs]=useState([])
+  useEffect(()=>{
+    getAllTurfs()
+  },[])
+  const getAllTurfs=async()=>{
+   try {
+    const result=await getAllTurfsAPI()
+    console.log(result);
+    
+    setAllTurfs(result.data)
+   } catch (error) {
+    console.error(error.response ? error.response.data : error.message)
+   }
+  }
   return (
     <div>
       <Header style={{ position: "relative", zIndex: "100" }} />
@@ -50,8 +64,14 @@ function LandingPage() {
               View all Arenas &gt;
             </a>
           </div>
-          <div className="d-flex ps-3  justify-content align-items-center flex-wrap" style={{position:"relative",zIndex:"2"}}>
-            <Cards /> <Cards /> <Cards /> <Cards />  <Cards />
+          <div className="d-flex p  justify-content align-items-center flex-wrap" style={{position:"relative",zIndex:"2"}}>
+          {allTurfs?.length>0 && allTurfs.slice(0, 6).map((turf)=>(
+            <Cards  key={turf._id} turf={turf}/>  
+           )
+           
+           )
+
+           }
           </div>
         </div>
       </div>

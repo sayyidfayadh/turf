@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { Modal, Button } from 'react-bootstrap';
+import { Modal, Carousel } from 'react-bootstrap';
 import MedicalServicesIcon from '@mui/icons-material/MedicalServices';
 import SportsCricketIcon from "@mui/icons-material/SportsCricket";
 import Header from "../../Components/Header/Header";
@@ -8,11 +8,16 @@ import "./ViewArena.css";
 import PoolIcon from '@mui/icons-material/Pool';
 import Footer from "../../Components/Footer/Footer";
 import { getViewTurfAPI } from "../../Services/AllAPI";
+import { Server_URL } from "../../Services/Server_URL";
+import { SportsBasketball, SportsCricket, SportsFootball, SportsSoccer, SportsSoccerOutlined, SportsTennis, Wifi } from "@mui/icons-material";
+import { Button } from "@mui/material";
 
 function ViewArena() {
   const {id}=useParams()
   // console.log(id);
   const[viewTurfData,setViewTurfData]=useState({})
+  // console.log(viewTurfData);
+  
   useEffect(()=>{
     
     if(id){
@@ -23,7 +28,11 @@ function ViewArena() {
   const getViewTurf=async(id)=>{
    try {
     const result=await getViewTurfAPI(id)
-    console.log(result);   
+    const data=result.data
+   setSports(data.sports.map(sport=>sport.name));
+   setAmenities(data.amenities.map(amenity=>amenity));
+    
+
     setViewTurfData(result.data)
    } catch (error) {
     console.error(error.response ? error.response.data : error.message)
@@ -34,45 +43,46 @@ function ViewArena() {
   const [showModal, setShowModal] = useState(false);
   const [selectedSport, setSelectedSport] = useState("");
 
-  const onSelectSport = (sport) => {
-    setSelectedSport(sport);
+  const onSelectSport = (sportname) => {
+    // console.log(sport);
+    
+    // setSelectedSport(sport);
+
+    const gm=viewTurfData?.sports.find(sport=>sport['name']===sportname)
+    console.log(gm);
+    
+    // console.log(gm.prices);
+    setPrices(gm.prices)
     setShowModal(true);
   };
+  const [prices,setPrices]=useState({})
 
   const handleClose = () => {
     setShowModal(false);
+    setPrices("")
   };
 
   const sportEmojis = {
-    cricket: "🏏",
-    basketball: "🏀",
-    football: "⚽",
-    tennis: "🎾",
+    cricket: <SportsCricket/>,
+    basketball:<SportsBasketball/>,
+    football: <SportsSoccerOutlined/>,
+    tennis: <SportsTennis/>,
+    badminton:'🏸',
     default: "🏅",
   };
 
-  const serviceEmojis = {
+  const amenityEmojis = {
     'first aid': <MedicalServicesIcon />,
-    'free wifi': "📶",
+    'free wifi': <Wifi/>,
     'drinking water': "💧",
     'change rooms': "🚿",
     'pool':<PoolIcon/>,
     default: "🏅",
   };
 
-  const services = [
-    { id: "0", name: "First Aid" },
-    { id: "2", name: "Free WiFi" },
-    { id: "3", name: "Wash Rooms" },
-    { id: "4", name: "Change Rooms" },
-    { id: "5", name: "Drinking Water" },
-    { id: "6", name: "Juice" },
-    { id: "7", name: "Fitness Coach" },
-    { id: "8", name: "Member's Lounge" },
-    {id:"9"   ,name:"pool"}
-  ];
+  const [amenities,setAmenities]=useState([])
 
-  const sports = ["cricket", "football", "basketball"];
+  const [sports,setSports]=useState([])
 
   return (
     <div className="">
@@ -85,41 +95,64 @@ function ViewArena() {
                 booking
               </Link>
             </li>
-            <li className="breadcrumb-item active">Arena.x</li>
+            <li className="breadcrumb-item active">{viewTurfData.name}</li>
           </ol>
         </nav>
         <div className="container-fluid turfcont ps-5 pt-5 pe-5 pb-5 bg-light border">
           <div className="row">
             <div className="col-md-7">
-              <p style={{ fontSize: "1.7rem", fontWeight: "bolder" }}>
-                Venue X - Venue before Venue X
+              <p style={{ fontSize: "1.9rem", fontWeight: "bolder" }}>
+               {viewTurfData.name},<span className="fs-3 fw-light">{viewTurfData.location}</span>
               </p>
-              <p style={{ fontSize: "1.1rem" }}>Location and Rating</p>
-              <img
+              {/* <p style={{ fontSize: "1.1rem" }}>Location and Rating</p> */}
+              {/* <img
                 className="img-fluid"
                 src="https://lh3.googleusercontent.com/p/AF1QipNfE8FuacZ265c5RxFrhgyAsSt2O_jiVKb96j6o=s680-w680-h510"
                 alt="Venue"
                
-              />
+              /> */}
+
+<Carousel>
+{viewTurfData.images && viewTurfData.images.length > 0?(viewTurfData.images.map((image,index)=> (
+  <Carousel.Item key={index}>
+        <img src={ `${Server_URL}/upload/${image}`} alt={`slide ${index+1}`} style={{width:"1000px"}}/>
+        <Carousel.Caption style={{backgroundColor:"rgba(0, 0, 0, 0.2)",borderRadius:"10px"}}>
+          <p className="text-decoration-underline" style={{fontSize:"1.8rem"}}>{viewTurfData.name}</p>
+          {viewTurfData?.amenities?.length > 0 ? (
+  viewTurfData.amenities.map((amenity, index) => (
+    <span key={index} className="me-5">{amenity}</span>
+  ))
+) : (
+ <></>
+)}  
+</Carousel.Caption>
+   </Carousel.Item>
+     ))
+):(<></>)}
+    </Carousel>
             </div>
             <div className="col-md-5 border p-3 mt-5">
-              <Link to="/cart/id">
-              <button className="btn btn-success btn-rounded w-100 p-3">Book Now</button> </Link>
+              
+              <button disabled={!viewTurfData.bookingStatus} className="btn btn-rounded btn-success fs-6 w-100 p-3" variant="contained" color="success" onClick={()=>navigate(`/cart/${viewTurfData._id}`)}>Book Now</button> 
               <div className="container border mt-4 mb-3">
                 <p style={{ fontSize: "1.3rem", textDecoration: "underline" }}>
-                  Timing
+                  Timing 
                 </p>
-                <p style={{ fontSize: "1.1rem" }}>24 Hour</p>
+                <p style={{ fontSize: "1.1rem" }}>
+                {viewTurfData.bookingStatus?"Open Now":"Closed Now"}
+                </p>
               </div>
-              <div className="map">
+             
+             <div className="map">
                 <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1964.5513545992062!2d76.32770343876646!3d10.00837439752437!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b080dc729310e4f%3A0xbcf47362f1dcdbbd!2sSportika%20Kochi%20Football%20Turf!5e0!3m2!1sen!2sin!4v1729417982985!5m2!1sen!2sin"
+                  src={viewTurfData.map}
                   style={{ width: "100%", height: "350px" }}
                   allowFullScreen=""
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
                 ></iframe>
               </div>
+             
             </div>
           </div>
           {/*available sprts  */}
@@ -132,7 +165,7 @@ function ViewArena() {
                 </span>
               </p>
               <div className="d-flex flex-wrap gap-4">
-                {sports.map((sport) => {
+                {sports.length>0 && sports.map((sport) => {
                   const emoji = sportEmojis[sport.toLowerCase()] || sportEmojis.default;
                   return (
                     <div
@@ -154,16 +187,16 @@ function ViewArena() {
             <div className="col-12">
               <p className="text-lg font-bold">Amenities</p>
               <div className="d-flex flex-wrap gap-4">
-                {services.map((service) => {
-                  const emoji = serviceEmojis[service.name.toLowerCase()] || serviceEmojis.default;
+                {amenities.map((amenity,index) => {
+                  const emoji = amenityEmojis[amenity.toLowerCase()] || amenityEmojis.default;
                   return (
                     <div
-                      key={service.id}
+                      key={index}
                       className="border rounded-lg p-4 d-flex flex-column align-items-center justify-content-center"
                       style={{ width: '80px', height: '80px' }}
                     >
                       <span className="fs-4 mb-2">{emoji}</span>
-                      <span className="text-sm"  style={{fontSize:"0.6rem"}}>{service.name}</span>
+                      <span className="text-sm"  style={{fontSize:"0.6rem"}}>{amenity}</span>
                     </div>
                   );
                 })}
@@ -175,10 +208,18 @@ function ViewArena() {
       
       <Modal show={showModal} onHide={handleClose} centered>
         <Modal.Header closeButton>
-          <Modal.Title>{selectedSport} Price Chart</Modal.Title>
+          <Modal.Title>{selectedSport} price chart</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p>Price information for {selectedSport} will go here.</p>
+         {prices ? (
+            Object.entries(prices).map(([key, value], index) => (
+                <div key={index}>
+                    <p>{key=='defaultPrice'?"regular fee":key}: ₹{value}</p>
+                </div>
+            ))
+        ) : (
+            <p>No price information available.</p>
+        )}
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>

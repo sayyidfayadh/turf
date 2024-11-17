@@ -11,9 +11,11 @@ import HomeIcon from "@mui/icons-material/Home";
 import LocalActivityIcon from "@mui/icons-material/LocalActivity";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 // import LightbulbIcon from "@mui/icons-material/Lightbulb";
+
 import { TextField, Autocomplete } from "@mui/material";
 import { Paper } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
+import { Shop, Shop2Outlined, ShopTwoRounded } from "@mui/icons-material";
 function Header({ hideLocationElement }) {
   const navigate = useNavigate();
   const [value, setValue] = useState(0); //of the bottomnav
@@ -27,9 +29,9 @@ function Header({ hideLocationElement }) {
   }, [location]);
   const handleLocationChange = (event, newValue) => {
     setLocation(newValue);
-    localStorage.setItem("location", newValue);
+    localStorage.setItem("location", newValue || "");
     // more to do with location
-    console.log("Selected location:", newValue);
+    // console.log("Selected location:", newValue);
     //api recall ig
   };
   return (
@@ -77,17 +79,21 @@ function Header({ hideLocationElement }) {
               <HomeIcon />
               Home
             </p>
+
             <p onClick={() => navigate("/booking")} className="nav">
               <LocalActivityIcon />
               Book
             </p>
+            <p onClick={() => navigate("/teamup")} className="nav">
+              <SportsKabaddiIcon />
+              Team-Up
+            </p>
+
             <p className="nav"  onClick={() => navigate("/shop")}  onChange={(event, newValue) => {
                 setValue(newValue);
               }}>
               {" "}
-              
-              <SportsKabaddiIcon />
-              Shop
+              <ShopTwoRounded /> Shop
             </p>
 
             {/* <p className="nav"> <LightbulbIcon />Learn</p> */}
@@ -131,10 +137,16 @@ function Header({ hideLocationElement }) {
                 label="Book"
                 icon={<LocalActivityIcon />}
               />
+                <BottomNavigationAction
+                onClick={() => navigate("/teamup")}
+                label="Book"
+                icon={<SportsKabaddiIcon
+                   />}
+              />
 <BottomNavigationAction
                 label="Shop"
                 onClick={() => navigate("/shop")}
-                icon={<SportsKabaddiIcon />}
+                icon={<Shop2Outlined />}
               />
               <BottomNavigationAction
                 onClick={() => navigate("/profile")}
