@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from './ContextAPI/CartContext';
@@ -6,7 +7,7 @@ import Header from '../../../Components/Header/Header';
 
 function ViewProduct() {
   const navigate = useNavigate();
-  const [size, setSize] = useState(""); 
+
   const { cart, dispatch } = useCart();
 
   // Example product data
@@ -19,18 +20,16 @@ function ViewProduct() {
     totalprice: 30 // Initial total price
   };
 
-  const handleSizeChange = (event) => {
-    setSize(event.target.value);
-  };
+ 
 
   const addToCart = () => {
-    if (size) {
+ 
       const updatedProduct = {
         ...product,
-        size: size, // Add selected size to the product object
+     
       };
       dispatch({ type: 'ADD_TO_CART', item: updatedProduct });
-    }
+    
   };
 
   return (
@@ -68,7 +67,7 @@ function ViewProduct() {
                   Lorem ipsum dolor sit amet consectetur adipisicing elit. 
                
                 </p>
-                <p style={{ fontSize: "0.8rem" }}>
+                {/* <p style={{ fontSize: "0.8rem" }}>
                   Size chart
                   <select className="form-select" value={size} onChange={handleSizeChange}>
                     <option value="">Select Size</option>
@@ -77,21 +76,19 @@ function ViewProduct() {
                     <option value="L">Large</option>
                     <option value="XL">Extra Large</option>
                   </select>
-                </p>
+                </p> */}
                 <h3>₹{product.price}</h3>
               </div>
               <div className='d-flex gap-5 justify-content-center'>
                 <button
-                  disabled={!size}
+           
                   className="btn btn-primary btn-rounded p-3 mb-3"
                   onClick={addToCart}
                 >
                   Add to Cart
                 </button> 
-                <Link to="/shopcart" state={{ size: size }} onClick={(e) => {
-                  if (!size) e.preventDefault(); 
-                }}>
-                  <button disabled={!size} onClick={addToCart} className="btn btn-success btn-rounded text-light p-3">Checkout</button>
+                <Link to="/shopcart" >
+                  <button  onClick={addToCart} className="btn btn-success btn-rounded text-light p-3">Checkout</button>
                 </Link>
               </div>
             </div>

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 
 import { Route, Routes } from 'react-router-dom'
 import './App.css'
@@ -28,6 +29,7 @@ import UserAuth from './Pages/@UserPages/UserAuth'
 
 function App() {
   const {isAuthorized,setIsAuthorized}=useContext(TokenAuthContext)
+  
   const {isUser,setIsUser}=useContext(TokenAuthContext)
 
   return (
@@ -45,10 +47,10 @@ function App() {
       <Route path='/cart/:id' element={isUser?<SlotBooking/>:<UserAuth/>} />
       <Route path='/profile/' element={isUser?<UserProfile/>:<UserAuth/>} />
       
-      //admin
+      {/* //admin */}
       <Route path='/admin' element={<AdminHome/>}/>
       <Route path='/addproducts' element={<AddMerchandise/>}/>
-      //TurfAdmin
+      {/* //TurfAdmin */}
       <Route path='/turfadmin' element={<TurfAdmin/>}/>
       <Route path='/adminprofile' element={isAuthorized?<Profile/>:<AdminAuth/>}/>
       <Route path='/addturf' element={isAuthorized?<TurfForm/>:<AdminAuth/>}/>

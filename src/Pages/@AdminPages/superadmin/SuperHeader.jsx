@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 
 import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
@@ -10,10 +11,12 @@ import HomeIcon from "@mui/icons-material/Home";
 // import LocationOnIcon from "@mui/icons-material/LocationOn";
 import LocalActivityIcon from "@mui/icons-material/LocalActivity";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+
 import LightbulbIcon from "@mui/icons-material/Lightbulb";
 import { TextField, Autocomplete } from "@mui/material";
 import { Paper } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
+import { DeliveryDiningRounded } from "@mui/icons-material";
 function SuperHeader() {
   const navigate = useNavigate();
   const [value, setValue] = useState(0); //of the bottomnav
@@ -49,7 +52,15 @@ function SuperHeader() {
               <LightbulbIcon />
               Merchandise
             </p>
-
+            <p onClick={() => navigate("/addadmins")} className="nav">
+              <AccountCircleIcon />
+              Admins
+            </p>
+            <p onClick={() => navigate("/orders")} className="nav">
+              <DeliveryDiningRounded />
+              Orders
+            </p>
+            
             {/* <p className="nav"> <LightbulbIcon />Learn</p> */}
           </div>
          
@@ -82,6 +93,17 @@ function SuperHeader() {
                 label="Merchandise"
                 icon={<LightbulbIcon />}
               />
+                  <BottomNavigationAction
+                onClick={() => navigate("/addadmins")}
+                label="Admins"
+                icon={<AccountCircleIcon />}
+              />
+                   <BottomNavigationAction
+                onClick={() => navigate("/orders")}
+                label="Orders"
+                icon={<DeliveryDiningRounded />}
+              />
+            
             
             </BottomNavigation>
           </Paper>
