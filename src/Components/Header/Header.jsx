@@ -15,7 +15,7 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { TextField, Autocomplete } from "@mui/material";
 import { Paper } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
-import { Shop, Shop2Outlined, ShopTwoRounded } from "@mui/icons-material";
+import {  Shop2Outlined, ShopTwoRounded } from "@mui/icons-material";
 function Header({ hideLocationElement }) {
   const navigate = useNavigate();
   const [value, setValue] = useState(0); //of the bottomnav
@@ -84,10 +84,10 @@ function Header({ hideLocationElement }) {
               <LocalActivityIcon />
               Book
             </p>
-            <p onClick={() => navigate("/teamup")} className="nav">
+            {/* <p onClick={() => navigate("/teamup")} className="nav">
               <SportsKabaddiIcon />
               Team-Up
-            </p>
+            </p> */}
 
             <p className="nav"  onClick={() => navigate("/shop")}  onChange={(event, newValue) => {
                 setValue(newValue);
@@ -137,12 +137,12 @@ function Header({ hideLocationElement }) {
                 label="Book"
                 icon={<LocalActivityIcon />}
               />
-                <BottomNavigationAction
+                {/* <BottomNavigationAction
                 onClick={() => navigate("/teamup")}
-                label="Book"
+                label="teamup"
                 icon={<SportsKabaddiIcon
                    />}
-              />
+              /> */}
 <BottomNavigationAction
                 label="Shop"
                 onClick={() => navigate("/shop")}

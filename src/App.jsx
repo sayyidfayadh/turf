@@ -25,6 +25,7 @@ import { useContext } from 'react'
 import TurfForm from './Pages/@AdminPages/turfadmin/TurfForm'
 import AdminAuth from './Pages/@AdminPages/turfadmin/adminAuth'
 import UserAuth from './Pages/@UserPages/UserAuth'
+import Admins from './Pages/@AdminPages/superadmin/Admins'
 
 
 function App() {
@@ -50,6 +51,8 @@ function App() {
       {/* //admin */}
       <Route path='/admin' element={<AdminHome/>}/>
       <Route path='/addproducts' element={<AddMerchandise/>}/>
+      <Route path='/addadmins' element={<Admins/>}/>
+      
       {/* //TurfAdmin */}
       <Route path='/turfadmin' element={<TurfAdmin/>}/>
       <Route path='/adminprofile' element={isAuthorized?<Profile/>:<AdminAuth/>}/>

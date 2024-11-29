@@ -165,7 +165,7 @@ const handleLogin=async()=>{
                <Row  className="pt-2">
               <h1>Welcome to YourArena</h1>
               <div className="d-flex justify-content-center mb-4">
-      <img src="./stadium.png" style={{ width: "150px", height: "150px" }} alt="aaa" />
+      <img src="/stadium.png" style={{ width: "150px", height: "150px" }} alt="logo" />
     </div>
                 <Col className="d-flex flex-column gap-4">
                

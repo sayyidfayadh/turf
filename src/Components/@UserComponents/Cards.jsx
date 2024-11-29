@@ -57,8 +57,6 @@ function Cards({ turf }) {
 
             <div className="d-flex justify-content-between mt-1">
               <div className="d-flex">
-                {/* <StarIcon sx={{ fontSize: '1.2rem', color: 'gold' }} /> */}
-                {/* <Typography variant="body2" sx={{ marginLeft: '5px' }}>4.5</Typography> */}
               </div>
               <div>
                 <Box

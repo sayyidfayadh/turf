@@ -12,15 +12,7 @@ import {
 
 import Header from "../../../Components/@AdminComponents/Header";
 import { Box, Chip } from "@mui/material";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
-import {
-  Avatar,
-  TextField,
-  ToggleButton,
-  ToggleButtonGroup,
-} from "@mui/material";
 import {
   changeStatusAPI,
   getTurfDataAPI,
@@ -145,7 +137,7 @@ function TurfForm() {
       reqBody.append("sports", JSON.stringify(turfData.sports));
       reqBody.append("amenities", JSON.stringify(turfData.amenities));
       reqBody.append("timeslots", JSON.stringify(turfData.timeslots));
-      turfData.images.forEach((image, index) => {
+      turfData.images.forEach((image) => {
         reqBody.append("images", image);
       });
       const token = sessionStorage.getItem("token");
@@ -347,7 +339,7 @@ function TurfForm() {
     if (token) {
       setIsLoggedIn(true);
     }
-  });
+  },[]);
   //modal
 
   const handleClose = () => setShow(false);

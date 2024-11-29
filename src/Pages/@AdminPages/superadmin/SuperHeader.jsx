@@ -25,7 +25,7 @@ function SuperHeader() {
       <div className="bg-light border">
       {/* header */}
       <nav>
-        <div className="d-flex  align-items-center justify-content-around p-2">
+        <div className="d-flex  align-items-center justify-content-between p-2">
           <div className="header d-flex align-items-center jusify-content-between ">
             <div className="logo" onClick={() => navigate("/admin")}>
               <h2>

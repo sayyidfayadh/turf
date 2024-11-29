@@ -57,3 +57,15 @@ export const handleCancelAPI=async(reqBody,reqHeader)=>{
 export const getallbookingsAPI=async(reqHeader)=>{
   return await commonAPI("POST",`${Server_URL}/getallbookings`,{},reqHeader)
 }
+
+
+// superadmin
+
+// get all admins
+export const getAllAdminsAPI=async()=>{
+  return await commonAPI("GET",`${Server_URL}/getalladmins`)
+}
+//add admin
+export const addAdminAPI=async(admindata)=>{
+  return await commonAPI("POST",`${Server_URL}/register`,admindata,"")
+}
